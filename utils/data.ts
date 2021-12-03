@@ -42,7 +42,8 @@ export const getData: IGetData = (day, map?) => {
     }
   } else {
     return {
-      TEST_DATA
+      TEST_DATA,
+      DATA: null,
     }
   }
 }

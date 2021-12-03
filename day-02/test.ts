@@ -1,15 +1,14 @@
 import { it } from 'mocha';
 import { expect } from 'chai';
-import { extractDay, getData } from '../utils/data';
+import { getData } from '../utils/data';
 import * as part1 from './part1';
 import * as part2 from './part2';
-const DAY = extractDay(__dirname);
 
 const { TEST_DATA, DATA } = getData(
-  DAY
+  2
 );
 
-describe(`Day ${DAY}`, () => {
+describe(`Day 2`, () => {
   describe('part 1', () => {
     it('should work on test case', () => {
       const expected = 150;
