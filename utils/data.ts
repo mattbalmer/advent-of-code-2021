@@ -46,3 +46,7 @@ export const getData: IGetData = (day, map?) => {
     }
   }
 }
+
+export const extractDay = (dirname: string): number => {
+  return parseInt(dirname.split('/').slice(-1)[0].replace('day-', ''))
+}

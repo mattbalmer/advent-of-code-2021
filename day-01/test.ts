@@ -1,10 +1,9 @@
 import { it } from 'mocha';
 import { expect } from 'chai';
-import { getData } from '../utils/data';
+import { extractDay, getData } from '../utils/data';
 import * as part1 from './part1';
 import * as part2 from './part2';
-
-const DAY = 1;
+const DAY = extractDay(__dirname);
 
 const { TEST_DATA, DATA } = getData<number>(
   DAY,
