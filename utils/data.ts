@@ -1,17 +1,25 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+const getFilePath = (day: number, prefix: string, set?: number): string => {
+  const filename = `${prefix}${set ? `-${set}` : ''}.txt`;
+  const dirName = `day-${day < 10 ? `0${day}` : day}`
+  return path.resolve(__dirname, '..', dirName, filename);
+}
+
 export const parseData = (content: string): string[] => {
   return content.split('\n');
 }
 
-export const getRealData = (day: string): string[] => {
-  const raw = fs.readFileSync(path.resolve(__dirname, '..', `${day}`, 'data.txt'), 'utf8');
+export const getRealData = (day: number, set?: number): string[] => {
+  const filename = getFilePath(day, 'data', set);
+  const raw = fs.readFileSync(filename, 'utf8');
   return parseData(raw);
 }
 
-export const getTestData = (day: string): string[] => {
-  const raw = fs.readFileSync(path.resolve(__dirname, '..', `${day}`, 'data-test.txt'), 'utf8');
+export const getTestData = (day: number, set?: number): string[] => {
+  const filename = getFilePath(day, 'data-test', set);
+  const raw = fs.readFileSync(filename, 'utf8');
   return parseData(raw);
 }
 
@@ -26,13 +34,12 @@ type IGetData = {
   }
 }
 export const getData: IGetData = (day, map?) => {
-  const dirName = `day-${day < 10 ? `0${day}` : day}`
-  let TEST_DATA = getTestData(dirName);
+  let TEST_DATA = getTestData(day);
   if (map) {
     TEST_DATA = TEST_DATA.map(map);
   }
-  if (fs.existsSync(path.resolve(__dirname, '..', dirName, 'data.txt'))) {
-    let DATA = getRealData(dirName);
+  if (fs.existsSync(getFilePath(day, 'data'))) {
+    let DATA = getRealData(day);
     if (map) {
       DATA = DATA.map(map);
     }
