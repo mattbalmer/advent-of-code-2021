@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export const parseData = (content: string): string[] => {
-  return content.split('\n');
+  return content.split('\n').filter(line => !line.startsWith('//'));
 }
 
 export const getRealData = (day: string): string[] => {
