@@ -9,7 +9,7 @@ export const main = (grid: number[][], steps: number): number => {
       for(let y = 0; y < grid[x].length; y++) {
         grid[x][y] += 1;
         if (grid[x][y] > 9) {
-          grid[x][y] = -0;
+          grid[x][y] = 0;
           flashing.push([x, y]);
         }
       }
@@ -27,14 +27,14 @@ export const main = (grid: number[][], steps: number): number => {
             (xD === 0 && yD === 0) ||
             xA < 0 || xA >= grid.length ||
             yA < 0 || yA >= grid[xA].length ||
-            Object.is(grid[xA][yA], -0)
+            grid[xA][yA] === 0
           ) {
             continue;
           }
 
           grid[xA][yA] += 1;
           if (grid[xA][yA] > 9) {
-            grid[xA][yA] = -0;
+            grid[xA][yA] = 0;
             flashing.push([xA, yA]);
           }
         }
