@@ -32,10 +32,10 @@ describe(`Day 14`, () => {
       expect(result).to.equal(expected);
     });
 
-    // it('should give the real answer', () => {
-    //   const result = part2.execute(DATA);
-    //
-    //   console.log(result);
-    // });
+    it('should give the real answer', () => {
+      const result = part2.execute(DATA, 40);
+
+      console.log(result);
+    });
   });
 });

@@ -25,7 +25,6 @@ export const main = (start: string, map: Record<string, string>, steps: number):
   const least = charsOrdered[0];
 
   return charCounts[most] - charCounts[least];
-  // return polymer;
 }
 
 export const execute = (inputs: string[], steps: number): number =>
