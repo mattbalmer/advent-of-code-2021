@@ -1,12 +1,13 @@
 import { it } from 'mocha';
 import { expect } from 'chai';
-import { getData } from '../utils/data';
+import { getData, getTestData } from '../utils/data';
 import * as part1 from './part1';
-// import * as part2 from './part2';
+import * as part2 from './part2';
 
 const { TEST_DATA, DATA } = getData(
   15
 );
+const TEST_DATA_2 = getTestData(15, 2);
 
 describe(`Day 15`, () => {
   describe('part 1', () => {
@@ -17,25 +18,25 @@ describe(`Day 15`, () => {
       expect(result).to.equal(expected);
     });
 
+    it('should give the real answer', () => {
+      const result = part1.execute(DATA);
+
+      console.log(result);
+    });
+  });
+
+  describe('part 2', () => {
+    it('should work on test case', () => {
+      const expected = 315;
+      const result = part2.execute(TEST_DATA_2);
+
+      expect(result).to.equal(expected);
+    });
+
     // it('should give the real answer', () => {
-    //   const result = part1.execute(DATA);
+    //   const result = part2.execute(DATA);
     //
     //   console.log(result);
     // });
   });
-
-  // describe('part 2', () => {
-  //   it('should work on test case', () => {
-  //     const expected = 0;
-  //     const result = part2.execute(TEST_DATA);
-  //
-  //     expect(result).to.equal(expected);
-  //   });
-  //
-  //   // it('should give the real answer', () => {
-  //   //   const result = part2.execute(DATA);
-  //   //
-  //   //   console.log(result);
-  //   // });
-  // });
 });

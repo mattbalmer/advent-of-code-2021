@@ -1,57 +1,107 @@
-type Coordinate = [number, number];
-type Grid = number[][];
+import { Coordinate, CoordinateMap, coordToStr } from '../utils/coordinates';
+import { PriorityQueue } from '../utils/misc';
 
 const ADJACENT_DELTAS = [
   [0,1],
   [1,0],
-];
+  [-1,0],
+  [0,-1],
+]
 
-const valueAt = (grid: Grid, coordinate: Coordinate): number => grid[coordinate[1]][coordinate[0]];
+const distanceBetween = (a: Coordinate, b: Coordinate): number =>
+  Math.abs(b[0] - a[0]) + Math.abs(b[1] - a[1]);
+const riskBetween = (a: Coordinate, b: Coordinate): number =>
+  (distanceBetween(a, b) - 1) * 9;
 const coordsMatch = (a: Coordinate, b: Coordinate): boolean => a[0] === b[0] && a[1] === b[1];
-const isCoordValid = (grid: Grid, coord: Coordinate): boolean =>
-  coord[0] >= 0 && coord[0] < grid.length && coord[1] >= 0 && coord[1] < grid.length;
-const coordToStr = (coord: Coordinate): string => `${coord[0]},${coord[1]}`;
-const strToCoord = (str: string): Coordinate => str.split(',').map(_ => parseInt(_, 10)) as Coordinate;
+const isCoordValid = (coord: Coordinate, length: number): boolean =>
+  coord[0] >= 0 && coord[0] < length && coord[1] >= 0 && coord[1] < length;
 
-export const main = (grid: Grid): number => {
-  const start: Coordinate = [0,0];
-  const end: Coordinate = [grid.length - 1, grid.length - 1];
-  const LOWEST_RISK_TO: Record<string, number> = {
-    [coordToStr(start)]: 0
-  };
+const reconstructPath = (bestNeighbor: CoordinateMap<Coordinate>, current: Coordinate): Coordinate[] => {
+  const path = [current];
 
-  const coordinates: [number, Coordinate][] = [[0, start]];
-
-  while(coordinates.length > 0) {
-    const [risk, coord] = coordinates.shift();
-    const coordString = coordToStr(coord);
-
-    ADJACENT_DELTAS
-      .map(delta =>
-        [coord[0] + delta[0], coord[1] + delta[1]] as Coordinate
-      )
-      .filter(c =>
-        isCoordValid(grid, c)
-      )
-      .forEach(c => {
-        const r = valueAt(grid, c);
-        const key = coordToStr(c);
-        LOWEST_RISK_TO[key] = Math.min(risk + r, LOWEST_RISK_TO[key] || Number.MAX_SAFE_INTEGER);
-        coordinates.push([risk + r, c]);
-      });
+  while (bestNeighbor.has(current)) {
+    current = bestNeighbor.get(current);
+    path.unshift(current)
   }
 
-  console.log(LOWEST_RISK_TO);
+  return path;
+}
+const sumPath = (path: Coordinate[], grid: CoordinateMap<number>): number => {
+  return path.reduce((sum, coordinate) => sum + grid.get(coordinate), 0);
+}
 
-  return LOWEST_RISK_TO[coordToStr(end)];
+export const main = (grid: CoordinateMap<number>, length: number): number => {
+  const start: Coordinate = [0,0];
+  const end: Coordinate = [length - 1, length - 1];
+
+  // console.log(grid);
+
+  const paths = new PriorityQueue<Coordinate>([
+    [riskBetween(start, end), start]
+  ]);
+
+  const bestNeighbor = new CoordinateMap<Coordinate>();
+
+  const lowestRisk = new CoordinateMap<number>({
+    [coordToStr(start)]: 0,
+  }, Infinity);
+
+  const bestGuess = new CoordinateMap<number>({
+    [coordToStr(start)]: distanceBetween(start, end),
+  }, Infinity);
+
+  while(paths.length > 0) {
+    const [score,current]: [number,Coordinate] = paths.shift();
+
+    // console.log(`${coordToStr(current)}`, score);
+
+    if (coordsMatch(current, end)) {
+      return sumPath(
+        reconstructPath(bestNeighbor, current).slice(1),
+        grid,
+      );
+    }
+
+    const neighbors = ADJACENT_DELTAS
+      .map(delta =>
+        [current[0] + delta[0], current[1] + delta[1]] as Coordinate
+      )
+      .filter(c => isCoordValid(c, length));
+
+    neighbors
+      .forEach(neighbor => {
+        const riskAt = grid.get(neighbor);
+        const tentative = lowestRisk.get(current) + riskAt;
+        // console.log(' -n', neighbor, riskAt, lowestRisk.get(current), tentative);
+
+        if (tentative < lowestRisk.get(neighbor)) {
+          const bestGuessValue = tentative + distanceBetween(neighbor, end);
+
+          bestNeighbor.set(neighbor, current);
+          lowestRisk.set(neighbor, tentative);
+          bestGuess.set(neighbor, bestGuessValue);
+
+          const isNeighborInQueue = paths.some(coord => coordsMatch(coord, neighbor));
+          if (!isNeighborInQueue) {
+            paths.insert(bestGuessValue, neighbor);
+          }
+        }
+      });
+  }
 }
 
 export const execute = (inputs: string[]): number =>
   main(
-    inputs
-      .map(line =>
-        line
-          .split('')
-          .map(_ => parseInt(_, 10)),
-      ),
+    new CoordinateMap<number>(
+      inputs
+        .reduce((grid, line, y) => {
+          line
+            .split('')
+            .map((_, x) => {
+              grid[coordToStr([x, y])] = parseInt(_, 10);
+            });
+          return grid;
+        }, {})
+    ),
+    inputs.length,
   )
