@@ -53,7 +53,7 @@ export const main = (grid: Grid): number => {
         !history.includes(coordToStr(c))
       )
       .map(c =>
-        [valueAt(grid, c)/* + riskBetween(c, end)*/, valueAt(grid, c), c] as [number, number, Coordinate]
+        [risk + valueAt(grid, c)/* + riskBetween(c, end)*/, valueAt(grid, c), c] as [number, number, Coordinate]
       )
       .sort((a, b) => a[0] - b[0])
       .forEach(([nScore, nRisk, nCoord]) => {
