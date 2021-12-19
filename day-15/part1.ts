@@ -40,13 +40,13 @@ export const main = (grid: CoordinateMap<number>, length: number): number => {
     [riskBetween(start, end), start]
   ]);
 
-  const bestNeighbor = new CoordinateMap<Coordinate>();
+  const bestNeighbor = new CoordinateMap<Coordinate>(grid.size);
 
-  const lowestRisk = new CoordinateMap<number>({
+  const lowestRisk = new CoordinateMap<number>(grid.size, {
     [coordToStr(start)]: 0,
   }, Infinity);
 
-  const bestGuess = new CoordinateMap<number>({
+  const bestGuess = new CoordinateMap<number>(grid.size, {
     [coordToStr(start)]: distanceBetween(start, end),
   }, Infinity);
 
@@ -93,6 +93,7 @@ export const main = (grid: CoordinateMap<number>, length: number): number => {
 export const execute = (inputs: string[]): number =>
   main(
     new CoordinateMap<number>(
+      inputs.length,
       inputs
         .reduce((grid, line, y) => {
           line

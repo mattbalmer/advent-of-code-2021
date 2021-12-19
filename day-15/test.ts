@@ -28,15 +28,15 @@ describe(`Day 15`, () => {
   describe('part 2', () => {
     it('should work on test case', () => {
       const expected = 315;
-      const result = part2.execute(TEST_DATA_2);
+      const result = part2.execute(TEST_DATA);
 
       expect(result).to.equal(expected);
     });
 
-    // it('should give the real answer', () => {
-    //   const result = part2.execute(DATA);
-    //
-    //   console.log(result);
-    // });
+    it('should give the real answer', () => {
+      const result = part2.execute(DATA);
+
+      console.log(result);
+    });
   });
 });
